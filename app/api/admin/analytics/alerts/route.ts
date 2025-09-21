@@ -1,11 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = 'https://xjiymlzvbvjzdujvgcwc.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhqaXltbHp2YnZqemR1anZnY3djIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgzMzgyODksImV4cCI6MjA3MzkxNDI4OX0.Sxuqx6dsSGnUHcLXsffdIocjpEuBdxHtDkJNA7PKZB0';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const now = new Date();
     const alerts = [];
@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
     const { data: pendingReviews, error: pendingError } = await supabase
       .from('quote_submissions')
-      .select('id, created_at, customers(name, email), vehicles(make, model, year)')
+      .select('id, created_at, customers!inner(name, email), vehicles!inner(make, model, year)')
       .eq('status', 'pending_review')
       .lt('created_at', twentyFourHoursAgo.toISOString());
 
@@ -28,9 +28,9 @@ export async function GET(request: NextRequest) {
         severity: pendingReviews.length > 10 ? 'high' : 'medium',
         data: pendingReviews.map(review => ({
           id: review.id,
-          customer: review.customers?.name || 'Unknown',
-          email: review.customers?.email || 'Unknown',
-          vehicle: `${review.vehicles?.year || 'N/A'} ${review.vehicles?.make || 'Unknown'} ${review.vehicles?.model || 'Unknown'}`,
+          customer: ((review.customers as unknown as Record<string, unknown>)?.name as string) || 'Unknown',
+          email: ((review.customers as unknown as Record<string, unknown>)?.email as string) || 'Unknown',
+          vehicle: `${((review.vehicles as unknown as Record<string, unknown>)?.year as number) || 'N/A'} ${((review.vehicles as unknown as Record<string, unknown>)?.make as string) || 'Unknown'} ${((review.vehicles as unknown as Record<string, unknown>)?.model as string) || 'Unknown'}`,
           hoursPending: Math.floor((now.getTime() - new Date(review.created_at).getTime()) / (1000 * 60 * 60))
         }))
       });
@@ -64,9 +64,9 @@ export async function GET(request: NextRequest) {
         severity: expiringOffers.length > 5 ? 'high' : 'medium',
         data: expiringOffers.map(offer => ({
           id: offer.id,
-          customer: offer.quote_submissions?.customers?.name || 'Unknown',
-          email: offer.quote_submissions?.customers?.email || 'Unknown',
-          vehicle: `${offer.quote_submissions?.vehicles?.year || 'N/A'} ${offer.quote_submissions?.vehicles?.make || 'Unknown'} ${offer.quote_submissions?.vehicles?.model || 'Unknown'}`,
+          customer: ((offer.quote_submissions as unknown as Record<string, unknown>)?.customers as unknown as Record<string, unknown>)?.name as string || 'Unknown',
+          email: ((offer.quote_submissions as unknown as Record<string, unknown>)?.customers as unknown as Record<string, unknown>)?.email as string || 'Unknown',
+          vehicle: `${((offer.quote_submissions as unknown as Record<string, unknown>)?.vehicles as unknown as Record<string, unknown>)?.year as number || 'N/A'} ${((offer.quote_submissions as unknown as Record<string, unknown>)?.vehicles as unknown as Record<string, unknown>)?.make as string || 'Unknown'} ${((offer.quote_submissions as unknown as Record<string, unknown>)?.vehicles as unknown as Record<string, unknown>)?.model as string || 'Unknown'}`,
           offerAmount: offer.offer_amount,
           hoursUntilExpiry: Math.floor((new Date(offer.expiry_date).getTime() - now.getTime()) / (1000 * 60 * 60))
         }))
@@ -99,9 +99,9 @@ export async function GET(request: NextRequest) {
         severity: 'high',
         data: failedOffers.map(offer => ({
           id: offer.id,
-          customer: offer.quote_submissions?.customers?.name || 'Unknown',
-          email: offer.quote_submissions?.customers?.email || 'Unknown',
-          vehicle: `${offer.quote_submissions?.vehicles?.year || 'N/A'} ${offer.quote_submissions?.vehicles?.make || 'Unknown'} ${offer.quote_submissions?.vehicles?.model || 'Unknown'}`,
+          customer: ((offer.quote_submissions as unknown as Record<string, unknown>)?.customers as unknown as Record<string, unknown>)?.name as string || 'Unknown',
+          email: ((offer.quote_submissions as unknown as Record<string, unknown>)?.customers as unknown as Record<string, unknown>)?.email as string || 'Unknown',
+          vehicle: `${((offer.quote_submissions as unknown as Record<string, unknown>)?.vehicles as unknown as Record<string, unknown>)?.year as number || 'N/A'} ${((offer.quote_submissions as unknown as Record<string, unknown>)?.vehicles as unknown as Record<string, unknown>)?.make as string || 'Unknown'} ${((offer.quote_submissions as unknown as Record<string, unknown>)?.vehicles as unknown as Record<string, unknown>)?.model as string || 'Unknown'}`,
           offerAmount: offer.offer_amount,
           hoursInDraft: Math.floor((now.getTime() - new Date(offer.created_at).getTime()) / (1000 * 60 * 60))
         }))

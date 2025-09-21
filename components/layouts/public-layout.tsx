@@ -13,7 +13,7 @@ interface PublicLayoutProps {
 
 export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [, setTheme] = useState<'light' | 'dark'>('light');
   useEffect(() => {
     // Check if there's a saved theme in localStorage
     const savedTheme = localStorage.getItem('theme') as 'light' | 'dark';
@@ -23,12 +23,6 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
     }
   }, []);
 
-  const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light';
-    setTheme(newTheme);
-    document.documentElement.classList.toggle('dark', newTheme === 'dark');
-    localStorage.setItem('theme', newTheme);
-  };
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);

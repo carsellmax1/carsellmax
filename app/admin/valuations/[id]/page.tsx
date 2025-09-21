@@ -12,17 +12,13 @@ import {
   TrendingUp, 
   FileText, 
   Save, 
-  Eye, 
   History,
   CheckCircle,
   AlertCircle,
   Car,
-  DollarSign,
-  Settings,
-  BarChart3,
   Send
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useCarStore } from "@/lib/car-store";
 import OfferModal from "@/components/modals/offer-modal";
@@ -108,7 +104,6 @@ export default function ValuationDetailPage({ params }: { params: Promise<{ id: 
     isCalculating, 
     calculationError,
     calculateValuation,
-    updateValuationField,
     setValuationData
   } = useCarStore();
   
@@ -127,7 +122,7 @@ export default function ValuationDetailPage({ params }: { params: Promise<{ id: 
     condition_assessment: '',
     risk_factors: ''
   });
-  const fetchValuation = async () => {
+  const fetchValuation = useCallback(async () => {
     try {
       setLoading(true);
       const resolvedParams = await params;
@@ -190,9 +185,9 @@ export default function ValuationDetailPage({ params }: { params: Promise<{ id: 
     } finally {
       setLoading(false);
     }
-  };
+  }, [params, setValuationData]);
 
-  const fetchHistory = async () => {
+  const fetchHistory = useCallback(async () => {
     try {
       const resolvedParams = await params;
       const response = await fetch(`/api/admin/valuations/${resolvedParams.id}/history`);
@@ -207,12 +202,12 @@ export default function ValuationDetailPage({ params }: { params: Promise<{ id: 
     } catch (error) {
       console.error("Error fetching history:", error);
     }
-  };
+  }, [params]);
 
   useEffect(() => {
     fetchValuation();
     fetchHistory();
-  }, [params]);
+  }, [params, fetchValuation, fetchHistory]);
 
   // Auto-calculate when valuation data is loaded
   useEffect(() => {
@@ -273,21 +268,6 @@ export default function ValuationDetailPage({ params }: { params: Promise<{ id: 
     };
   };
 
-  const handleRefreshMarketData = async () => {
-    if (!valuation) return;
-    
-    const vehicleData = {
-      vehicle_year: valuation.vehicle_year,
-      vehicle_make: valuation.vehicle_make,
-      vehicle_model: valuation.vehicle_model,
-      vehicle_mileage: valuation.vehicle_mileage,
-      vehicle_condition: valuation.vehicle_condition,
-      vehicle_vin: valuation.vehicle_vin,
-      base_value: formData.base_value || 0
-    };
-
-    await calculateValuation(vehicleData);
-  };
 
   const handleCalculateValuation = async () => {
     if (!valuation) return;
@@ -325,7 +305,7 @@ export default function ValuationDetailPage({ params }: { params: Promise<{ id: 
       // Update valuation with market data
       setValuation(prev => prev ? {
         ...prev,
-        market_data: valuationData.market_data || prev.market_data
+        market_data: (valuationData.market_data as unknown as Record<string, unknown>) || prev.market_data
       } : prev);
     }
   };
@@ -545,7 +525,7 @@ export default function ValuationDetailPage({ params }: { params: Promise<{ id: 
                       <div className="p-4 border rounded-lg">
                         <div className="text-sm text-muted-foreground">Kelley Blue Book</div>
                         <div className="text-lg font-semibold">
-                          {valuationData?.market_data?.kbb_fair_value || valuation.market_data?.kbb_fair_value || 'N/A'}
+                          {((valuationData?.market_data as unknown as Record<string, unknown>)?.kbb_fair_value as string) || ((valuation.market_data as unknown as Record<string, unknown>)?.kbb_fair_value as string) || 'N/A'}
                         </div>
                         <a 
                           href={`https://www.kbb.com/car-values/${valuation.vehicle_year}/${valuation.vehicle_make.toLowerCase()}/${valuation.vehicle_model.toLowerCase()}`}
@@ -560,7 +540,7 @@ export default function ValuationDetailPage({ params }: { params: Promise<{ id: 
                       <div className="p-4 border rounded-lg">
                         <div className="text-sm text-muted-foreground">Edmunds</div>
                         <div className="text-lg font-semibold">
-                          {valuationData?.market_data?.edmunds_value || valuation.market_data?.edmunds_value || 'N/A'}
+                          {((valuationData?.market_data as unknown as Record<string, unknown>)?.edmunds_value as string) || ((valuation.market_data as unknown as Record<string, unknown>)?.edmunds_value as string) || 'N/A'}
                         </div>
                         <a 
                           href={`https://www.edmunds.com/appraisal/${valuation.vehicle_year}/${valuation.vehicle_make.toLowerCase()}/${valuation.vehicle_model.toLowerCase()}`}
@@ -575,7 +555,7 @@ export default function ValuationDetailPage({ params }: { params: Promise<{ id: 
                       <div className="p-4 border rounded-lg">
                         <div className="text-sm text-muted-foreground">CarMax</div>
                         <div className="text-lg font-semibold">
-                          {valuationData?.market_data?.carmax_value || valuation.market_data?.carmax_value || 'N/A'}
+                          {((valuationData?.market_data as unknown as Record<string, unknown>)?.carmax_value as string) || ((valuation.market_data as unknown as Record<string, unknown>)?.carmax_value as string) || 'N/A'}
                         </div>
                         <a 
                           href={`https://www.carmax.com/cars/${valuation.vehicle_year}/${valuation.vehicle_make.toLowerCase()}/${valuation.vehicle_model.toLowerCase()}`}
@@ -590,7 +570,7 @@ export default function ValuationDetailPage({ params }: { params: Promise<{ id: 
                       <div className="p-4 border rounded-lg">
                         <div className="text-sm text-muted-foreground">Carvana</div>
                         <div className="text-lg font-semibold">
-                          {valuationData?.market_data?.carvana_value || valuation.market_data?.carvana_value || 'N/A'}
+                          {((valuationData?.market_data as unknown as Record<string, unknown>)?.carvana_value as string) || ((valuation.market_data as unknown as Record<string, unknown>)?.carvana_value as string) || 'N/A'}
                         </div>
                         <a 
                           href={`https://www.carvana.com/cars/${valuation.vehicle_year}/${valuation.vehicle_make.toLowerCase()}/${valuation.vehicle_model.toLowerCase()}`}
@@ -611,11 +591,11 @@ export default function ValuationDetailPage({ params }: { params: Promise<{ id: 
                     </div>
                   )}
                   
-                  {(valuationData?.market_data?.explanation || valuation.market_data?.explanation) && (
+                  {(((valuationData?.market_data as unknown as Record<string, unknown>)?.explanation as string) || ((valuation.market_data as unknown as Record<string, unknown>)?.explanation as string)) && (
                   <div className="p-4 bg-muted rounded-lg">
                     <h4 className="font-medium mb-2 text-foreground dark:text-foreground">AI Market Analysis</h4>
                     <p className="text-sm text-foreground dark:text-foreground leading-relaxed">
-                      {valuationData?.market_data?.explanation || valuation.market_data?.explanation}
+                      {((valuationData?.market_data as unknown as Record<string, unknown>)?.explanation as string) || ((valuation.market_data as unknown as Record<string, unknown>)?.explanation as string)}
                     </p>
                   </div>
                   )}
@@ -906,12 +886,12 @@ export default function ValuationDetailPage({ params }: { params: Promise<{ id: 
               vehicle_make: valuation.quote_submission?.vehicles?.make || valuation.vehicle_make,
               vehicle_model: valuation.quote_submission?.vehicles?.model || valuation.vehicle_model,
               vehicle_mileage: valuation.quote_submission?.vehicles?.mileage || valuation.vehicle_mileage,
-              estimated_value: valuationData?.recommended_offer || valuation.estimated_value || 0
+               estimated_value: valuationData?.recommended_offer || valuation.recommended_offer || 0
             }}
             valuation={{
-              recommended_offer: valuationData?.recommended_offer || valuation.estimated_value || 0,
-              offer_range_min: valuationData?.net_offer_min || (valuation.estimated_value || 0) - 1000,
-              offer_range_max: valuationData?.net_offer_max || (valuation.estimated_value || 0) + 1000
+              recommended_offer: valuationData?.recommended_offer || valuation.recommended_offer || 0,
+              offer_range_min: valuationData?.net_offer_min || (valuation.recommended_offer || 0) - 1000,
+              offer_range_max: valuationData?.net_offer_max || (valuation.recommended_offer || 0) + 1000
             }}
           />
         )}

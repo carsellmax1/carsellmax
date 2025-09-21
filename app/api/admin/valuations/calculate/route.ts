@@ -35,15 +35,15 @@ const SOURCES = [
 
 type MarketDataItem = SearchResult;
 
-interface ParsedCarValue {
-  kbb_fair_value: string;
-  edmunds_value: string;
-  carmax_value: string;
-  carvana_value: string;
-  final_estimate: string;
-  confidence: 'high' | 'medium' | 'low';
-  explanation: string;
-}
+// interface ParsedCarValue {
+//   kbb_fair_value: string;
+//   edmunds_value: string;
+//   carmax_value: string;
+//   carvana_value: string;
+//   final_estimate: string;
+//   confidence: 'high' | 'medium' | 'low';
+//   explanation: string;
+// }
 
 const supabaseUrl = 'https://xjiymlzvbvjzdujvgcwc.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhqaXltbHp2YnZqemR1anZnY3djIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgzMzgyODksImV4cCI6MjA3MzkxNDI4OX0.Sxuqx6dsSGnUHcLXsffdIocjpEuBdxHtDkJNA7PKZB0';
@@ -202,7 +202,6 @@ export async function POST(request: NextRequest) {
       vehicle_condition,
       vehicle_vin,
       base_value,
-      market_data = {}
     } = body;
 
     if (!vehicle_year || !vehicle_make || !vehicle_model || !vehicle_mileage || !vehicle_condition) {
@@ -497,27 +496,27 @@ function generateJustification(params: Record<string, unknown>): string {
 
   let justification = `Valuation for ${vehicle_year} ${vehicle_make} ${vehicle_model}:\n\n`;
   
-  justification += `Base Market Value: $${calculatedBaseValue.toLocaleString()}\n`;
+  justification += `Base Market Value: $${(calculatedBaseValue as number).toLocaleString()}\n`;
   
-  if (conditionAdjustment !== 0) {
-    const conditionPercent = ((conditionAdjustment / calculatedBaseValue) * 100).toFixed(1);
-    justification += `Condition Adjustment (${vehicle_condition}): ${conditionAdjustment >= 0 ? '+' : ''}$${conditionAdjustment.toLocaleString()} (${conditionPercent}%)\n`;
+  if ((conditionAdjustment as number) !== 0) {
+    const conditionPercent = (((conditionAdjustment as number) / (calculatedBaseValue as number)) * 100).toFixed(1);
+    justification += `Condition Adjustment (${vehicle_condition}): ${(conditionAdjustment as number) >= 0 ? '+' : ''}$${(conditionAdjustment as number).toLocaleString()} (${conditionPercent}%)\n`;
   }
   
-  if (mileageAdjustment !== 0) {
-    const mileagePercent = ((mileageAdjustment / calculatedBaseValue) * 100).toFixed(1);
-    justification += `Mileage Adjustment (${vehicle_mileage.toLocaleString()} miles): ${mileageAdjustment >= 0 ? '+' : ''}$${mileageAdjustment.toLocaleString()} (${mileagePercent}%)\n`;
+  if ((mileageAdjustment as number) !== 0) {
+    const mileagePercent = (((mileageAdjustment as number) / (calculatedBaseValue as number)) * 100).toFixed(1);
+    justification += `Mileage Adjustment (${(vehicle_mileage as number).toLocaleString()} miles): ${(mileageAdjustment as number) >= 0 ? '+' : ''}$${(mileageAdjustment as number).toLocaleString()} (${mileagePercent}%)\n`;
   }
   
-  if (marketAdjustment !== 0) {
-    const marketPercent = ((marketAdjustment / calculatedBaseValue) * 100).toFixed(1);
-    justification += `Market Adjustment: ${marketAdjustment >= 0 ? '+' : ''}$${marketAdjustment.toLocaleString()} (${marketPercent}%)\n`;
+  if ((marketAdjustment as number) !== 0) {
+    const marketPercent = (((marketAdjustment as number) / (calculatedBaseValue as number)) * 100).toFixed(1);
+    justification += `Market Adjustment: ${(marketAdjustment as number) >= 0 ? '+' : ''}$${(marketAdjustment as number).toLocaleString()} (${marketPercent}%)\n`;
   }
   
-  justification += `\nTotal Adjustments: ${totalAdjustments >= 0 ? '+' : ''}$${totalAdjustments.toLocaleString()}\n`;
-  justification += `Adjusted Value: $${adjustedValue.toLocaleString()}\n`;
-  justification += `Fees (Inspection: $${inspectionFee}, Processing: $${processingFee}): $${(inspectionFee + processingFee).toLocaleString()}\n`;
-  justification += `\nRecommended Offer: $${recommendedOffer.toLocaleString()}`;
+  justification += `\nTotal Adjustments: ${(totalAdjustments as number) >= 0 ? '+' : ''}$${(totalAdjustments as number).toLocaleString()}\n`;
+  justification += `Adjusted Value: $${(adjustedValue as number).toLocaleString()}\n`;
+  justification += `Fees (Inspection: $${(inspectionFee as number)}, Processing: $${(processingFee as number)}): ${((inspectionFee as number) + (processingFee as number)).toLocaleString()}\n`;
+  justification += `\nRecommended Offer: $${(recommendedOffer as number).toLocaleString()}`;
 
   return justification;
 }

@@ -66,7 +66,7 @@ class ExternalValuationService {
       responses.forEach((response, index) => {
         if (response.status === 'fulfilled' && response.value) {
           const source = ['kbb', 'edmunds', 'carmax', 'carvana'][index];
-          results[source as keyof MarketData] = response.value;
+          (results as Record<string, ValuationResult>)[source] = response.value as ValuationResult;
           valuations.push(response.value);
         }
       });
@@ -470,10 +470,10 @@ class ExternalValuationService {
         };
       }
       
-      return null;
+      return {};
     } catch (error) {
       console.error('NHTSA API error:', error);
-      return null;
+      return {};
     }
   }
 }

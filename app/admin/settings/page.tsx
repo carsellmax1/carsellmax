@@ -11,7 +11,6 @@ import { Separator } from "@/components/ui/separator";
 import { 
   Settings, 
   User, 
-  Mail, 
   Shield, 
   Bell, 
   Database,

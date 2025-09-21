@@ -31,7 +31,7 @@ export async function GET() {
       .eq('status', 'accepted');
 
     // Calculate acceptance rate
-    const acceptanceRate = quotesSent > 0 ? Math.round((acceptedQuotes / quotesSent) * 100) : 0;
+    const acceptanceRate = (quotesSent || 0) > 0 ? Math.round(((acceptedQuotes || 0) / (quotesSent || 1)) * 100) : 0;
 
     // Get total revenue estimate (sum of accepted offers)
     const { data: offers } = await supabase

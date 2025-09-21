@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, ArrowRight, Camera, X, Upload } from "lucide-react";
+import { ArrowLeft, ArrowRight, Camera, X } from "lucide-react";
 import Image from "next/image";
 
 interface ExteriorImagesFormProps {
@@ -110,7 +110,6 @@ export default function ExteriorImagesForm({ onNext, onBack, isLoading = false }
             {imagePositions.map(({ key, label, placeholder }) => {
               const position = key as keyof ExteriorImagesData;
               const isRequired = requiredImages.includes(key);
-              const hasImage = images[position] !== null;
               const preview = getImagePreview(position);
 
               return (
@@ -151,7 +150,7 @@ export default function ExteriorImagesForm({ onNext, onBack, isLoading = false }
                           {isRequired ? 'Required' : 'Optional'}
                         </div>
                         <input
-                          ref={(el) => fileInputRefs.current[key] = el}
+                          ref={(el) => { fileInputRefs.current[key] = el; }}
                           type="file"
                           accept="image/*"
                           onChange={(e) => handleFileSelect(position, e)}

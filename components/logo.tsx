@@ -6,7 +6,7 @@ interface LogoProps {
   showText?: boolean;
 }
 
-export function Logo({ className = '', size = 'md', showText = true }: LogoProps) {
+export function Logo({ className = '', size = 'md' }: LogoProps) {
   const textSizeClasses = {
     sm: 'text-lg',
     md: 'text-xl',

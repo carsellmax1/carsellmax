@@ -8,7 +8,6 @@ import { useCarStore } from "@/lib/car-store";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { ArrowLeft, DollarSign, TrendingUp, CheckCircle, Car, Calendar, Fuel, Palette } from "lucide-react";
-import Image from "next/image";
 
 export default function ValuationResultPage() {
   const router = useRouter();

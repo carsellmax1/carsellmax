@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useCarStore } from "@/lib/car-store";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { CheckCircle, Circle } from "lucide-react";
 import UserInformationForm from "./user-information-form";
@@ -79,7 +79,6 @@ export default function ComprehensiveSubmissionForm() {
   const [vehicleData, setVehicleData] = useState<VehicleFormData | null>(null);
   const [exteriorImages, setExteriorImages] = useState<ExteriorImagesData | null>(null);
   const [interiorImages, setInteriorImages] = useState<InteriorImagesData | null>(null);
-  const [engineVideo, setEngineVideo] = useState<EngineVideoData | null>(null);
 
   const { 
     foundCar: carData,
@@ -121,7 +120,6 @@ export default function ComprehensiveSubmissionForm() {
   };
 
   const handleEngineVideoNext = async (data: EngineVideoData) => {
-    setEngineVideo(data);
     setCompletedSteps(prev => [...prev, 'engine-video']);
     await handleFinalSubmission(data);
   };
@@ -361,7 +359,7 @@ export default function ComprehensiveSubmissionForm() {
             <Progress value={progress} className="h-2" />
             
             <div className="flex justify-between mt-4">
-              {steps.map((step, index) => {
+              {steps.map((step) => {
                 const isCompleted = completedSteps.includes(step.id as SubmissionStep);
                 const isCurrent = step.id === currentStep;
                 

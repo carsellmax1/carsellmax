@@ -8,7 +8,7 @@ import ComprehensiveSubmissionForm from "@/components/forms/comprehensive-submis
 
 export default function InstantValuationPage() {
   const router = useRouter();
-  const { foundCar: car, reset } = useCarStore();
+  const { foundCar: car } = useCarStore();
 
   useEffect(() => {
     // Redirect to home if no car data

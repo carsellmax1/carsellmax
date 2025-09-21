@@ -69,12 +69,6 @@ export async function sendEmail(to: string, template: EmailTemplate, data: Offer
     const mergedTemplate = mergeEmailTemplate(template, data);
     
     // Create email message
-    const message = {
-      to,
-      subject: mergedTemplate.subject,
-      html: mergedTemplate.html,
-      text: mergedTemplate.text
-    };
 
     // Convert to Gmail format
     const emailLines = [

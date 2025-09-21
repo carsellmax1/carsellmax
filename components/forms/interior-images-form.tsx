@@ -93,7 +93,6 @@ export default function InteriorImagesForm({ onNext, onBack, isLoading = false }
     return null;
   };
 
-  const requiredImages = imagePositions.filter(pos => pos.required).map(pos => pos.key);
   const hasRequiredImages = true; // Temporarily disabled for testing
 
   return (
@@ -109,7 +108,6 @@ export default function InteriorImagesForm({ onNext, onBack, isLoading = false }
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {imagePositions.map(({ key, label, placeholder, required }) => {
               const position = key as keyof InteriorImagesData;
-              const hasImage = images[position] !== null;
               const preview = getImagePreview(position);
 
               return (
@@ -150,7 +148,7 @@ export default function InteriorImagesForm({ onNext, onBack, isLoading = false }
                           {required ? 'Required' : 'Optional'}
                         </div>
                         <input
-                          ref={(el) => fileInputRefs.current[key] = el}
+                          ref={(el) => { fileInputRefs.current[key] = el; }}
                           type="file"
                           accept="image/*"
                           onChange={(e) => handleFileSelect(position, e)}

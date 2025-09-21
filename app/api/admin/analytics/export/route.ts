@@ -41,7 +41,6 @@ async function exportFinanceData(startDate: Date, format: string) {
   }
 
   // Fetch related data separately
-  const offerIds = offers?.map(o => o.id) || [];
   const submissionIds = offers?.map(o => o.quote_submission_id).filter(Boolean) || [];
   
   // Get quote submissions data
@@ -266,9 +265,9 @@ function getTopVehicles(submissions: Record<string, unknown>[]) {
   const vehicleCounts: Record<string, number> = {};
   
   submissions.forEach(submission => {
-    const vehicle = submission.vehicles;
+    const vehicle = submission.vehicles as Record<string, unknown>;
     if (vehicle) {
-      const key = `${vehicle.year || 'Unknown'} ${vehicle.make || 'Unknown'} ${vehicle.model || 'Unknown'}`;
+      const key = `${(vehicle.year as number) || 'Unknown'} ${(vehicle.make as string) || 'Unknown'} ${(vehicle.model as string) || 'Unknown'}`;
       vehicleCounts[key] = (vehicleCounts[key] || 0) + 1;
     }
   });
@@ -281,32 +280,32 @@ function getTopVehicles(submissions: Record<string, unknown>[]) {
 
 function getRecentActivity(submissions: Record<string, unknown>[], offers: Record<string, unknown>[]) {
   const recentSubmissions = submissions
-    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    .sort((a, b) => new Date(b.created_at as string).getTime() - new Date(a.created_at as string).getTime())
     .slice(0, 5)
     .map(s => ({
       type: 'submission',
       id: s.id,
-      customer: s.customers?.name || 'Unknown',
-      vehicle: `${s.vehicles?.year || 'N/A'} ${s.vehicles?.make || 'Unknown'} ${s.vehicles?.model || 'Unknown'}`,
+      customer: (s.customers as Record<string, unknown>)?.name || 'Unknown',
+      vehicle: `${(s.vehicles as Record<string, unknown>)?.year || 'N/A'} ${(s.vehicles as Record<string, unknown>)?.make || 'Unknown'} ${(s.vehicles as Record<string, unknown>)?.model || 'Unknown'}`,
       status: s.status,
       date: s.created_at
     }));
 
   const recentOffers = offers
-    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    .sort((a, b) => new Date(b.created_at as string).getTime() - new Date(a.created_at as string).getTime())
     .slice(0, 5)
     .map(o => ({
       type: 'offer',
       id: o.id,
-      customer: o.quote_submissions?.customers?.name || 'Unknown',
-      vehicle: `${o.quote_submissions?.vehicles?.year || 'N/A'} ${o.quote_submissions?.vehicles?.make || 'Unknown'} ${o.quote_submissions?.vehicles?.model || 'Unknown'}`,
+      customer: ((o.quote_submissions as Record<string, unknown>)?.customers as Record<string, unknown>)?.name || 'Unknown',
+      vehicle: `${((o.quote_submissions as Record<string, unknown>)?.vehicles as Record<string, unknown>)?.year || 'N/A'} ${((o.quote_submissions as Record<string, unknown>)?.vehicles as Record<string, unknown>)?.make || 'Unknown'} ${((o.quote_submissions as Record<string, unknown>)?.vehicles as Record<string, unknown>)?.model || 'Unknown'}`,
       status: o.status,
       amount: o.offer_amount,
       date: o.created_at
     }));
 
   return [...recentSubmissions, ...recentOffers]
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .sort((a, b) => new Date(b.date as string).getTime() - new Date(a.date as string).getTime())
     .slice(0, 10);
 }
 

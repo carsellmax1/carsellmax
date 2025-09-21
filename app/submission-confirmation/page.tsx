@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,10 +8,10 @@ import { Badge } from '@/components/ui/badge';
 import { CheckCircle, Clock, Mail, Phone, Calendar } from 'lucide-react';
 import { useCarStore } from '@/lib/car-store';
 
-export default function SubmissionConfirmationPage() {
+function SubmissionConfirmationContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { foundCar, valuation, marketData, resetStore } = useCarStore();
+  const { foundCar, valuation, marketData } = useCarStore();
   const [submissionId, setSubmissionId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -30,7 +30,6 @@ export default function SubmissionConfirmationPage() {
   };
 
   const handleNewValuation = () => {
-    resetStore();
     router.push('/');
   };
 
@@ -88,14 +87,14 @@ export default function SubmissionConfirmationPage() {
               <div>
                 <p className="text-sm text-gray-600">Mileage</p>
                 <p className="font-medium">
-                  {foundCar?.mileage?.toLocaleString()} miles
+                  {(foundCar as unknown as Record<string, unknown>)?.mileage?.toLocaleString()} miles
                 </p>
               </div>
 
               <div>
                 <p className="text-sm text-gray-600">Estimated Value</p>
                 <p className="font-medium text-green-600">
-                  {valuation?.estimatedPrice || marketData?.estimatedPrice || 'Calculating...'}
+                  {String((valuation as unknown as Record<string, unknown>)?.estimatedPrice || (marketData as unknown as Record<string, unknown>)?.estimatedPrice || 'Calculating...')}
                 </p>
               </div>
 
@@ -215,5 +214,13 @@ export default function SubmissionConfirmationPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SubmissionConfirmationPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SubmissionConfirmationContent />
+    </Suspense>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { AdminLayout } from '@/components/layouts/admin-layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -98,11 +98,7 @@ export default function AnalyticsPage() {
   const [loading, setLoading] = useState(true);
   const [selectedPeriod, setSelectedPeriod] = useState(30);
 
-  useEffect(() => {
-    fetchAnalyticsData();
-  }, [selectedPeriod]);
-
-  const fetchAnalyticsData = async () => {
+  const fetchAnalyticsData = useCallback(async () => {
     setLoading(true);
     try {
       const [opsResponse, cohortResponse, alertsResponse] = await Promise.all([
@@ -125,7 +121,11 @@ export default function AnalyticsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedPeriod]);
+
+  useEffect(() => {
+    fetchAnalyticsData();
+  }, [fetchAnalyticsData]);
 
   const handleExport = async (type: string) => {
     try {

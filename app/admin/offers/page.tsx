@@ -12,14 +12,11 @@ import {
   Eye,
   Edit,
   Mail,
-  Plus,
   DollarSign,
   Clock,
   CheckCircle,
   XCircle,
-  Send,
-  Archive,
-  ArchiveRestore
+  Archive
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import OfferDetailsSheet from "@/components/sheets/offer-details-sheet";

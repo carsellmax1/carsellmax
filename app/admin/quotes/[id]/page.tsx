@@ -420,37 +420,37 @@ export default function QuoteDetailPage() {
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                      {(quote.engine_videos as any)?.engineVideo && (
+                      {(quote.engine_videos as Record<string, unknown>)?.engineVideo ? (
                         <div>
                           <label className="text-sm font-medium text-muted-foreground">Engine Video</label>
                           <div className="mt-2">
                             <video
-                              src={(quote.engine_videos as any)?.engineVideo}
+                              src={((quote.engine_videos as Record<string, unknown>)?.engineVideo as string) || ''}
                               controls
                               className="w-full max-w-md rounded-lg"
                             />
                           </div>
                         </div>
-                      )}
+                      ) : null}
                       
-                      {(quote.engine_videos as any)?.engineSound && (
+                      {(quote.engine_videos as Record<string, unknown>)?.engineSound ? (
                         <div>
                           <label className="text-sm font-medium text-muted-foreground">Engine Sound</label>
                           <div className="mt-2">
                             <audio
-                              src={(quote.engine_videos as any)?.engineSound}
+                              src={((quote.engine_videos as Record<string, unknown>)?.engineSound as string) || ''}
                               controls
                               className="w-full max-w-md"
                             />
                           </div>
                         </div>
-                      )}
+                      ) : null}
 
-                      {(quote.engine_videos as any)?.additionalVideos && (quote.engine_videos as any)?.additionalVideos.length > 0 && (
+                      {(quote.engine_videos as Record<string, unknown>)?.additionalVideos && Array.isArray((quote.engine_videos as Record<string, unknown>)?.additionalVideos) && ((quote.engine_videos as Record<string, unknown>)?.additionalVideos as string[]).length > 0 ? (
                         <div>
                           <label className="text-sm font-medium text-muted-foreground">Additional Videos</label>
                           <div className="mt-2 space-y-2">
-                            {(quote.engine_videos as any)?.additionalVideos.map((video: string, index: number) => (
+                            {((quote.engine_videos as Record<string, unknown>)?.additionalVideos as string[]).map((video: string, index: number) => (
                               <video
                                 key={index}
                                 src={video}
@@ -460,14 +460,14 @@ export default function QuoteDetailPage() {
                             ))}
                           </div>
                         </div>
-                      )}
+                      ) : null}
 
-                      {(quote.engine_videos as any)?.notes && (
+                      {(quote.engine_videos as Record<string, unknown>)?.notes ? (
                         <div>
                           <label className="text-sm font-medium text-muted-foreground">Video Notes</label>
-                          <p className="text-sm bg-muted p-3 rounded-md mt-2">{(quote.engine_videos as any)?.notes}</p>
+                          <p className="text-sm bg-muted p-3 rounded-md mt-2">{((quote.engine_videos as Record<string, unknown>)?.notes as string) || ''}</p>
                         </div>
-                      )}
+                      ) : null}
                     </CardContent>
                   </Card>
                 )}

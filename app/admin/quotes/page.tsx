@@ -12,7 +12,6 @@ import {
   Eye, 
   Edit, 
   Mail, 
-  MoreHorizontal,
   ChevronLeft,
   ChevronRight,
   Calculator
@@ -39,11 +38,14 @@ interface QuoteSubmission {
   customers?: {
     name: string;
     email: string;
+    phone: string;
   };
   vehicles?: {
     make: string;
     model: string;
     year: number;
+    mileage: number;
+    vin: string;
   };
 }
 

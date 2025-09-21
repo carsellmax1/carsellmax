@@ -35,7 +35,7 @@ interface QuoteSubmission {
 }
 
 export default function AdminDashboard() {
-  const [quoteSubmissions, setQuoteSubmissions] = useState<QuoteSubmission[]>([]);
+  const [, setQuoteSubmissions] = useState<QuoteSubmission[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Mock data - replace with real data later

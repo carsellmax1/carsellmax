@@ -4,14 +4,11 @@ import { AdminLayout } from "@/components/layouts/admin-layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { 
   Search, 
   Car, 
   Calculator, 
   ArrowLeft,
-  CheckCircle
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -37,7 +34,6 @@ interface QuoteSubmission {
 
 export default function NewValuationPage() {
   const [quoteSubmissions, setQuoteSubmissions] = useState<QuoteSubmission[]>([]);
-  const [selectedSubmission, setSelectedSubmission] = useState<QuoteSubmission | null>(null);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [creating, setCreating] = useState(false);

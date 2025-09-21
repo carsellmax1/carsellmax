@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get quote submissions for context
-    const { data: quotes, error: quotesError } = await supabase
+    const { error: quotesError } = await supabase
       .from('quote_submissions')
       .select('*')
       .gte('created_at', new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString());
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
     const completedValuations = valuations?.filter(v => v.status === 'final').length || 0;
     const averageValuationTime = calculateAverageValuationTime(valuations || []);
     const averageValuationAmount = calculateAverageValuationAmount(valuations || []);
-    const valuationAccuracy = calculateValuationAccuracy(valuations || [], quotes || []);
+    const valuationAccuracy = calculateValuationAccuracy(valuations || []);
     const topPerformingModels = getTopPerformingModels(valuations || []);
     const valuationTrends = getValuationTrends(valuations || [], days);
 
@@ -72,8 +72,8 @@ function calculateAverageValuationTime(valuations: Record<string, unknown>[]): n
   if (completedValuations.length === 0) return 0;
 
   const totalTime = completedValuations.reduce((sum, valuation) => {
-    const created = new Date(valuation.created_at);
-    const updated = new Date(valuation.updated_at);
+    const created = new Date(valuation.created_at as string);
+    const updated = new Date(valuation.updated_at as string);
     return sum + (updated.getTime() - created.getTime());
   }, 0);
 
@@ -86,13 +86,13 @@ function calculateAverageValuationAmount(valuations: Record<string, unknown>[]):
   if (completedValuations.length === 0) return 0;
 
   const totalAmount = completedValuations.reduce((sum, valuation) => {
-    return sum + (valuation.final_valuation || 0);
+    return sum + ((valuation.final_valuation as number) || 0);
   }, 0);
 
   return Math.round(totalAmount / completedValuations.length);
 }
 
-function calculateValuationAccuracy(valuations: Record<string, unknown>[], quotes: Record<string, unknown>[]): number {
+function calculateValuationAccuracy(valuations: Record<string, unknown>[]): number {
   // This is a simplified accuracy calculation
   // In a real system, you'd compare valuations with actual sale prices
   const completedValuations = valuations.filter(v => v.status === 'final');
@@ -113,7 +113,7 @@ function getTopPerformingModels(valuations: Record<string, unknown>[]): Array<{m
         modelStats[model] = { count: 0, totalValue: 0 };
       }
       modelStats[model].count++;
-      modelStats[model].totalValue += valuation.final_valuation;
+      modelStats[model].totalValue += (valuation.final_valuation as number);
     }
   });
 
@@ -140,10 +140,10 @@ function getValuationTrends(valuations: Record<string, unknown>[], days: number)
   // Populate with actual data
   valuations.forEach(valuation => {
     if (valuation.created_at && valuation.final_valuation) {
-      const date = new Date(valuation.created_at).toISOString().split('T')[0];
+      const date = new Date(valuation.created_at as string).toISOString().split('T')[0];
       if (trends[date]) {
         trends[date].count++;
-        trends[date].totalValue += valuation.final_valuation;
+        trends[date].totalValue += (valuation.final_valuation as number);
       }
     }
   });

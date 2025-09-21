@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { CheckCircle, XCircle, Clock, Car, DollarSign, Calendar, FileText, Phone, Mail } from 'lucide-react';
+import { CheckCircle, XCircle, Car, DollarSign, Calendar, FileText, Phone } from 'lucide-react';
 
 interface OfferData {
   id: string;
@@ -75,7 +75,7 @@ export default function OfferPage({ params }: { params: Promise<{ token: string 
   const handleAccept = async () => {
     try {
       setActionLoading(true);
-      const response = await fetch(`/api/offer/${offer?.tracking_token}/accept`, {
+      const response = await fetch(`/api/offer/${(offer as unknown as Record<string, unknown>)?.tracking_token}/accept`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -102,7 +102,7 @@ export default function OfferPage({ params }: { params: Promise<{ token: string 
   const handleDecline = async () => {
     try {
       setActionLoading(true);
-      const response = await fetch(`/api/offer/${offer?.tracking_token}/decline`, {
+      const response = await fetch(`/api/offer/${(offer as unknown as Record<string, unknown>)?.tracking_token}/decline`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -188,7 +188,7 @@ export default function OfferPage({ params }: { params: Promise<{ token: string 
                   <div className="text-5xl font-bold text-green-600 mb-2">
                     ${offer.offer_amount.toLocaleString()}
                   </div>
-                  <p className="text-gray-600">For your {offer.quote_submissionss?.vehicles?.year} {offer.quote_submissionss?.vehicles?.make} {offer.quote_submissionss?.vehicles?.model}</p>
+                  <p className="text-gray-600">For your {String((((offer as unknown as Record<string, unknown>)?.quote_submissions as unknown as Record<string, unknown>)?.vehicles as unknown as Record<string, unknown>)?.year || '')} {String((((offer as unknown as Record<string, unknown>)?.quote_submissions as unknown as Record<string, unknown>)?.vehicles as unknown as Record<string, unknown>)?.make || '')} {String((((offer as unknown as Record<string, unknown>)?.quote_submissions as unknown as Record<string, unknown>)?.vehicles as unknown as Record<string, unknown>)?.model || '')}</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -203,7 +203,7 @@ export default function OfferPage({ params }: { params: Promise<{ token: string 
                     <DollarSign className="h-5 w-5 text-gray-400" />
                     <div>
                       <p className="text-sm text-gray-600">Based on Valuation</p>
-                      <p className="font-medium">${offer.quote_submissions?.valuations?.base_value?.toLocaleString() || 'N/A'}</p>
+                      <p className="font-medium">${(((offer as unknown as Record<string, unknown>)?.quote_submissions as unknown as Record<string, unknown>)?.valuations as unknown as Record<string, unknown>)?.base_value?.toLocaleString() || 'N/A'}</p>
                     </div>
                   </div>
                 </div>

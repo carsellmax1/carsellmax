@@ -332,8 +332,8 @@ async function handleComprehensiveSubmission(data: ComprehensiveSubmissionData, 
     const { data: quoteData, error: quoteError } = await supabase
       .from('quote_submissions')
       .insert([{
-        customer_id: customerData.id,
-        vehicle_id: vehicleData.id,
+        customer_id: (customerData as Record<string, unknown>).id,
+        vehicle_id: (vehicleData as Record<string, unknown>).id,
         estimated_value: carData.estimated_value,
         additional_notes: vehicleDetails.additionalInfo,
         status: 'pending_review',
@@ -457,8 +457,8 @@ async function handleComprehensiveSubmission(data: ComprehensiveSubmissionData, 
         customerData.email,
         customerData.name,
         vehicleSummary,
-        carData.mileage,
-        estimatedValue,
+        carData.mileage as unknown as number,
+        estimatedValue as string,
         quoteData.id,
         trackingUrl
       );
@@ -639,8 +639,8 @@ async function handleLegacySubmission(submissionData: CarSubmissionData, clientI
     const { data: quoteData, error: quoteError } = await supabase
       .from('quote_submissions')
       .insert([{
-        customer_id: customerData.id,
-        vehicle_id: vehicleData.id,
+        customer_id: (customerData as Record<string, unknown>).id,
+        vehicle_id: (vehicleData as Record<string, unknown>).id,
         estimated_value: valuation.estimated_value,
         additional_notes: vehicle.additional_notes,
         status: 'pending_review',

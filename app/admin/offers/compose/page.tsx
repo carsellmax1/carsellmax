@@ -7,9 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { ArrowLeft, Send, Eye, TestTube, Car, DollarSign, Calendar, FileText } from 'lucide-react';
+import { ArrowLeft, Send, Eye, TestTube, Car, DollarSign, FileText } from 'lucide-react';
 
 interface QuoteSubmission {
   id: string;

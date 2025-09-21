@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
   Sheet, 
   SheetContent, 
@@ -18,12 +17,9 @@ import {
   Mail, 
   Send, 
   Save, 
-  Clock, 
   DollarSign, 
   User, 
-  Car,
   Calendar,
-  FileText,
   AlertCircle,
   CheckCircle,
   XCircle,
@@ -71,7 +67,7 @@ export default function OfferDetailsSheet({ isOpen, onClose, offerId }: OfferDet
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [sending, setSending] = useState(false);
-  const [status, setStatus] = useState<{ type: 'success' | 'error' | null; message: string | null }>(null);
+  const [status, setStatus] = useState<{ type: 'success' | 'error' | null; message: string | null }>({ type: null, message: null });
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({
     offer_amount: 0,
@@ -79,13 +75,7 @@ export default function OfferDetailsSheet({ isOpen, onClose, offerId }: OfferDet
     notes: ''
   });
 
-  useEffect(() => {
-    if (isOpen && offerId) {
-      fetchOfferDetails();
-    }
-  }, [isOpen, offerId]);
-
-  const fetchOfferDetails = async () => {
+  const fetchOfferDetails = useCallback(async () => {
     if (!offerId) return;
     
     setLoading(true);
@@ -108,7 +98,13 @@ export default function OfferDetailsSheet({ isOpen, onClose, offerId }: OfferDet
     } finally {
       setLoading(false);
     }
-  };
+  }, [offerId]);
+
+  useEffect(() => {
+    if (isOpen && offerId) {
+      fetchOfferDetails();
+    }
+  }, [isOpen, offerId, fetchOfferDetails]);
 
   const handleSave = async () => {
     if (!offer) return;

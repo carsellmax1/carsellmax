@@ -89,10 +89,10 @@ export async function GET(
       created_at: quote.created_at,
       updated_at: quote.updated_at,
       customer: {
-        name: quote.customers?.name || '',
-        email: quote.customers?.email || '',
-        phone: quote.customers?.phone || '',
-        address: quote.customers?.address || {
+        name: (quote.customers as unknown as Record<string, unknown>)?.name || '',
+        email: (quote.customers as unknown as Record<string, unknown>)?.email || '',
+        phone: (quote.customers as unknown as Record<string, unknown>)?.phone || '',
+        address: (quote.customers as unknown as Record<string, unknown>)?.address || {
           street: '',
           city: '',
           state: '',
@@ -100,12 +100,12 @@ export async function GET(
         }
       },
       vehicle: {
-        make: quote.vehicles?.make || '',
-        model: quote.vehicles?.model || '',
-        year: quote.vehicles?.year || 0,
-        mileage: quote.vehicles?.mileage || 0,
-        color: quote.vehicles?.color || '',
-        condition: quote.vehicles?.condition || '',
+        make: (quote.vehicles as unknown as Record<string, unknown>)?.make || '',
+        model: (quote.vehicles as unknown as Record<string, unknown>)?.model || '',
+        year: (quote.vehicles as unknown as Record<string, unknown>)?.year || 0,
+        mileage: (quote.vehicles as unknown as Record<string, unknown>)?.mileage || 0,
+        color: (quote.vehicles as unknown as Record<string, unknown>)?.color || '',
+        condition: (quote.vehicles as unknown as Record<string, unknown>)?.condition || '',
         additional_notes: quote.additional_notes
       },
       photos: quote.media_assets?.map((asset: Record<string, unknown>) => ({
@@ -114,13 +114,13 @@ export async function GET(
         url: asset.file_path
       })) || [],
       valuation: quote.valuations ? {
-        market_value: quote.valuations.base_value,
-        final_valuation: quote.valuations.recommended_offer
+        market_value: (quote.valuations as unknown as Record<string, unknown>).base_value,
+        final_valuation: (quote.valuations as unknown as Record<string, unknown>).recommended_offer
       } : undefined,
       offer: quote.offers ? {
-        offer_amount: quote.offers.offer_amount,
-        valid_until: quote.offers.valid_until,
-        terms_conditions: quote.offers.terms_conditions
+        offer_amount: (quote.offers as unknown as Record<string, unknown>).offer_amount,
+        valid_until: (quote.offers as unknown as Record<string, unknown>).valid_until,
+        terms_conditions: (quote.offers as unknown as Record<string, unknown>).terms_conditions
       } : undefined
     };
 

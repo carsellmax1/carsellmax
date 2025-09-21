@@ -39,7 +39,7 @@ export default function OfferModal({ isOpen, onClose, quoteSubmission, valuation
   const [notes, setNotes] = useState('');
   const [sending, setSending] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [status, setStatus] = useState<{ type: 'success' | 'error' | null; message: string | null }>(null);
+  const [status, setStatus] = useState<{ type: 'success' | 'error' | null; message: string | null }>({ type: null, message: null });
 
   // Update offer amount when valuation changes
   React.useEffect(() => {
@@ -54,7 +54,7 @@ export default function OfferModal({ isOpen, onClose, quoteSubmission, valuation
     if (!offerAmount) return;
 
     setSaving(true);
-    setStatus(null);
+    setStatus({ type: null, message: null });
 
     try {
       const response = await fetch('/api/admin/offers', {
@@ -90,7 +90,7 @@ export default function OfferModal({ isOpen, onClose, quoteSubmission, valuation
     if (!offerAmount) return;
 
     setSending(true);
-    setStatus(null);
+    setStatus({ type: null, message: null });
 
     try {
       // First, create the offer
@@ -156,7 +156,7 @@ export default function OfferModal({ isOpen, onClose, quoteSubmission, valuation
           setTerms('');
           setConditions('');
           setNotes('');
-          setStatus(null);
+          setStatus({ type: null, message: null });
         }, 2000);
       } else {
         setStatus({ type: 'error', message: sendData.error || 'Failed to send offer' });
@@ -178,7 +178,7 @@ export default function OfferModal({ isOpen, onClose, quoteSubmission, valuation
       setTerms('');
       setConditions('');
       setNotes('');
-      setStatus(null);
+      setStatus({ type: null, message: null });
     }
   };
 

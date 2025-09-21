@@ -163,7 +163,7 @@ interface CarStore {
 
 export const useCarStore = create<CarStore>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       // Initial state
       carFound: false,
       foundCar: null,
@@ -257,12 +257,12 @@ export const useCarStore = create<CarStore>()(
           const conditionAdjustment = vehicleData.vehicle_condition === 'excellent' ? 1000 : 
                                     vehicleData.vehicle_condition === 'good' ? 500 : 
                                     vehicleData.vehicle_condition === 'fair' ? -500 : -1000;
-          const mileageAdjustment = vehicleData.vehicle_mileage < 50000 ? 1000 :
-                                  vehicleData.vehicle_mileage < 100000 ? 0 : -1000;
+          const mileageAdjustment = (vehicleData.vehicle_mileage as number) < 50000 ? 1000 :
+                                  (vehicleData.vehicle_mileage as number) < 100000 ? 0 : -1000;
           const marketAdjustment = -500; // Conservative market adjustment
           
           const totalAdjustments = conditionAdjustment + mileageAdjustment + marketAdjustment;
-          const adjustedValue = baseValue + totalAdjustments;
+          const adjustedValue = (baseValue as number) + totalAdjustments;
           const inspectionFee = 150;
           const processingFee = 200;
           const totalFees = inspectionFee + processingFee;
@@ -271,7 +271,7 @@ export const useCarStore = create<CarStore>()(
           const recommendedOffer = adjustedValue - totalFees;
           
           const valuationData: ValuationData = {
-            base_value: baseValue,
+            base_value: baseValue as number,
             condition_adjustment: conditionAdjustment,
             mileage_adjustment: mileageAdjustment,
             options_adjustment: 0,

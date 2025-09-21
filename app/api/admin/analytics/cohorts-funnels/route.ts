@@ -76,9 +76,9 @@ export async function GET(request: NextRequest) {
 
     // Analyze by source (simplified - using submission method)
     const bySource = {
-      website: { total: 0, converted: 0, avgValue: 0 },
-      referral: { total: 0, converted: 0, avgValue: 0 },
-      other: { total: 0, converted: 0, avgValue: 0 }
+      website: { total: 0, converted: 0, avgValue: 0, totalValue: 0 },
+      referral: { total: 0, converted: 0, avgValue: 0, totalValue: 0 },
+      other: { total: 0, converted: 0, avgValue: 0, totalValue: 0 }
     };
 
     // Analyze by geography (using address data)
@@ -116,33 +116,33 @@ export async function GET(request: NextRequest) {
         if (!byVehicle.byMake[make]) {
           byVehicle.byMake[make] = { total: 0, converted: 0, avgValue: 0, totalValue: 0 };
         }
-        byVehicle.byMake[make].total++;
-        byVehicle.byMake[make].totalValue += valuation?.final_valuation || submission.estimated_value || 0;
-        if (offer?.status === 'accepted') byVehicle.byMake[make].converted++;
+        (byVehicle.byMake[make] as { total: number; converted: number; avgValue: number; totalValue: number }).total++;
+        (byVehicle.byMake[make] as { total: number; converted: number; avgValue: number; totalValue: number }).totalValue += valuation?.final_valuation || submission.estimated_value || 0;
+        if (offer?.status === 'accepted') (byVehicle.byMake[make] as { total: number; converted: number; avgValue: number; totalValue: number }).converted++;
 
         // By model
         if (!byVehicle.byModel[model]) {
           byVehicle.byModel[model] = { total: 0, converted: 0, avgValue: 0, totalValue: 0 };
         }
-        byVehicle.byModel[model].total++;
-        byVehicle.byModel[model].totalValue += valuation?.final_valuation || submission.estimated_value || 0;
-        if (offer?.status === 'accepted') byVehicle.byModel[model].converted++;
+        (byVehicle.byModel[model] as { total: number; converted: number; avgValue: number; totalValue: number }).total++;
+        (byVehicle.byModel[model] as { total: number; converted: number; avgValue: number; totalValue: number }).totalValue += valuation?.final_valuation || submission.estimated_value || 0;
+        if (offer?.status === 'accepted') (byVehicle.byModel[model] as { total: number; converted: number; avgValue: number; totalValue: number }).converted++;
 
         // By year
         if (!byVehicle.byYear[year]) {
           byVehicle.byYear[year] = { total: 0, converted: 0, avgValue: 0, totalValue: 0 };
         }
-        byVehicle.byYear[year].total++;
-        byVehicle.byYear[year].totalValue += valuation?.final_valuation || submission.estimated_value || 0;
-        if (offer?.status === 'accepted') byVehicle.byYear[year].converted++;
+        (byVehicle.byYear[year] as { total: number; converted: number; avgValue: number; totalValue: number }).total++;
+        (byVehicle.byYear[year] as { total: number; converted: number; avgValue: number; totalValue: number }).totalValue += valuation?.final_valuation || submission.estimated_value || 0;
+        if (offer?.status === 'accepted') (byVehicle.byYear[year] as { total: number; converted: number; avgValue: number; totalValue: number }).converted++;
 
         // By make/model combination
         if (!byVehicle.byMakeModel[makeModel]) {
           byVehicle.byMakeModel[makeModel] = { total: 0, converted: 0, avgValue: 0, totalValue: 0 };
         }
-        byVehicle.byMakeModel[makeModel].total++;
-        byVehicle.byMakeModel[makeModel].totalValue += valuation?.final_valuation || submission.estimated_value || 0;
-        if (offer?.status === 'accepted') byVehicle.byMakeModel[makeModel].converted++;
+        (byVehicle.byMakeModel[makeModel] as { total: number; converted: number; avgValue: number; totalValue: number }).total++;
+        (byVehicle.byMakeModel[makeModel] as { total: number; converted: number; avgValue: number; totalValue: number }).totalValue += valuation?.final_valuation || submission.estimated_value || 0;
+        if (offer?.status === 'accepted') (byVehicle.byMakeModel[makeModel] as { total: number; converted: number; avgValue: number; totalValue: number }).converted++;
       }
 
       // Source analysis (simplified)
@@ -161,16 +161,16 @@ export async function GET(request: NextRequest) {
         if (!byGeography.byState[state]) {
           byGeography.byState[state] = { total: 0, converted: 0, avgValue: 0, totalValue: 0 };
         }
-        byGeography.byState[state].total++;
-        byGeography.byState[state].totalValue += valuation?.final_valuation || submission.estimated_value || 0;
-        if (offer?.status === 'accepted') byGeography.byState[state].converted++;
+        (byGeography.byState[state] as { total: number; converted: number; avgValue: number; totalValue: number }).total++;
+        (byGeography.byState[state] as { total: number; converted: number; avgValue: number; totalValue: number }).totalValue += valuation?.final_valuation || submission.estimated_value || 0;
+        if (offer?.status === 'accepted') (byGeography.byState[state] as { total: number; converted: number; avgValue: number; totalValue: number }).converted++;
 
         if (!byGeography.byCity[city]) {
           byGeography.byCity[city] = { total: 0, converted: 0, avgValue: 0, totalValue: 0 };
         }
-        byGeography.byCity[city].total++;
-        byGeography.byCity[city].totalValue += valuation?.final_valuation || submission.estimated_value || 0;
-        if (offer?.status === 'accepted') byGeography.byCity[city].converted++;
+        (byGeography.byCity[city] as { total: number; converted: number; avgValue: number; totalValue: number }).total++;
+        (byGeography.byCity[city] as { total: number; converted: number; avgValue: number; totalValue: number }).totalValue += valuation?.final_valuation || submission.estimated_value || 0;
+        if (offer?.status === 'accepted') (byGeography.byCity[city] as { total: number; converted: number; avgValue: number; totalValue: number }).converted++;
       }
 
       // Funnel analysis
@@ -186,27 +186,27 @@ export async function GET(request: NextRequest) {
 
     // Calculate averages and conversion rates
     Object.values(byVehicle.byMake).forEach(item => {
-      item.avgValue = item.total > 0 ? item.totalValue / item.total : 0;
+      (item as { total: number; converted: number; avgValue: number; totalValue: number }).avgValue = (item as { total: number; converted: number; avgValue: number; totalValue: number }).total > 0 ? (item as { total: number; converted: number; avgValue: number; totalValue: number }).totalValue / (item as { total: number; converted: number; avgValue: number; totalValue: number }).total : 0;
     });
     Object.values(byVehicle.byModel).forEach(item => {
-      item.avgValue = item.total > 0 ? item.totalValue / item.total : 0;
+      (item as { total: number; converted: number; avgValue: number; totalValue: number }).avgValue = (item as { total: number; converted: number; avgValue: number; totalValue: number }).total > 0 ? (item as { total: number; converted: number; avgValue: number; totalValue: number }).totalValue / (item as { total: number; converted: number; avgValue: number; totalValue: number }).total : 0;
     });
     Object.values(byVehicle.byYear).forEach(item => {
-      item.avgValue = item.total > 0 ? item.totalValue / item.total : 0;
+      (item as { total: number; converted: number; avgValue: number; totalValue: number }).avgValue = (item as { total: number; converted: number; avgValue: number; totalValue: number }).total > 0 ? (item as { total: number; converted: number; avgValue: number; totalValue: number }).totalValue / (item as { total: number; converted: number; avgValue: number; totalValue: number }).total : 0;
     });
     Object.values(byVehicle.byMakeModel).forEach(item => {
-      item.avgValue = item.total > 0 ? item.totalValue / item.total : 0;
+      (item as { total: number; converted: number; avgValue: number; totalValue: number }).avgValue = (item as { total: number; converted: number; avgValue: number; totalValue: number }).total > 0 ? (item as { total: number; converted: number; avgValue: number; totalValue: number }).totalValue / (item as { total: number; converted: number; avgValue: number; totalValue: number }).total : 0;
     });
 
     Object.values(bySource).forEach(item => {
-      item.avgValue = item.total > 0 ? item.totalValue / item.total : 0;
+      (item as { total: number; converted: number; avgValue: number; totalValue: number }).avgValue = (item as { total: number; converted: number; avgValue: number; totalValue: number }).total > 0 ? (item as { total: number; converted: number; avgValue: number; totalValue: number }).totalValue / (item as { total: number; converted: number; avgValue: number; totalValue: number }).total : 0;
     });
 
     Object.values(byGeography.byState).forEach(item => {
-      item.avgValue = item.total > 0 ? item.totalValue / item.total : 0;
+      (item as { total: number; converted: number; avgValue: number; totalValue: number }).avgValue = (item as { total: number; converted: number; avgValue: number; totalValue: number }).total > 0 ? (item as { total: number; converted: number; avgValue: number; totalValue: number }).totalValue / (item as { total: number; converted: number; avgValue: number; totalValue: number }).total : 0;
     });
     Object.values(byGeography.byCity).forEach(item => {
-      item.avgValue = item.total > 0 ? item.totalValue / item.total : 0;
+      (item as { total: number; converted: number; avgValue: number; totalValue: number }).avgValue = (item as { total: number; converted: number; avgValue: number; totalValue: number }).total > 0 ? (item as { total: number; converted: number; avgValue: number; totalValue: number }).totalValue / (item as { total: number; converted: number; avgValue: number; totalValue: number }).total : 0;
     });
 
     // Calculate funnel conversion rates

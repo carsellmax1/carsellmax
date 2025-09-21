@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect } from "react";
 import { useCarStore } from "@/lib/car-store";
 
 type Theme = "dark" | "light" | "system";
@@ -25,8 +25,6 @@ const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 
 export function ThemeProvider({
   children,
-  defaultTheme = "system",
-  storageKey = "car-store",
   ...props
 }: ThemeProviderProps) {
   const { theme, setTheme } = useCarStore();

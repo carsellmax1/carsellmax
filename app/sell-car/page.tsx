@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 import { Car, Camera, FileText, CheckCircle } from "lucide-react";
 
 export default function SellCarPage() {
@@ -38,7 +37,7 @@ export default function SellCarPage() {
 
         {/* Steps */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-          {steps.map((step, index) => {
+          {steps.map((step) => {
             const Icon = step.icon;
             return (
               <Card key={step.title} className="text-center">
