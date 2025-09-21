@@ -1,0 +1,214 @@
+"use client";
+
+import { useState, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { ArrowLeft, ArrowRight, Camera, X } from "lucide-react";
+import Image from "next/image";
+
+interface InteriorImagesFormProps {
+  onNext: (data: InteriorImagesData) => void;
+  onBack: () => void;
+  isLoading?: boolean;
+}
+
+interface InteriorImagesData {
+  dashboard: File | null;
+  frontSeats: File | null;
+  rearSeats: File | null;
+  trunk: File | null;
+  roofInterior: File | null;
+  centerConsole: File | null;
+  infotainment: File | null;
+  odometer: File | null;
+}
+
+const imagePositions = [
+  { key: 'dashboard', label: 'Dashboard', placeholder: '/placeholders/interior-dashboard.png', required: true },
+  { key: 'frontSeats', label: 'Front Seats', placeholder: '/placeholders/interior-driver_side_front_seat.png', required: true },
+  { key: 'rearSeats', label: 'Rear Seats', placeholder: '/placeholders/interior-driver_side_rear_seat.png', required: false },
+  { key: 'trunk', label: 'Trunk/Cargo Area', placeholder: '/placeholders/interior-trunk.png', required: false },
+  { key: 'roofInterior', label: 'Roof Interior', placeholder: '/placeholders/interior-dashboard.png', required: false },
+  { key: 'centerConsole', label: 'Center Console', placeholder: '/placeholders/interior-center_console.png', required: false },
+  { key: 'infotainment', label: 'Infotainment System', placeholder: '/placeholders/interior-dashboard.png', required: false },
+  { key: 'odometer', label: 'Odometer Reading', placeholder: '/placeholders/interior-odometer.png', required: true }
+];
+
+export default function InteriorImagesForm({ onNext, onBack, isLoading = false }: InteriorImagesFormProps) {
+  const [images, setImages] = useState<InteriorImagesData>({
+    dashboard: null,
+    frontSeats: null,
+    rearSeats: null,
+    trunk: null,
+    roofInterior: null,
+    centerConsole: null,
+    infotainment: null,
+    odometer: null
+  });
+
+  const fileInputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
+
+  const handleImageUpload = (position: keyof InteriorImagesData, file: File | null) => {
+    setImages(prev => ({
+      ...prev,
+      [position]: file
+    }));
+  };
+
+  const handleFileSelect = (position: keyof InteriorImagesData, event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0] || null;
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file');
+        return;
+      }
+      // Validate file size (max 10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        alert('File size must be less than 10MB');
+        return;
+      }
+      handleImageUpload(position, file);
+    }
+  };
+
+  const removeImage = (position: keyof InteriorImagesData) => {
+    handleImageUpload(position, null);
+    if (fileInputRefs.current[position]) {
+      fileInputRefs.current[position]!.value = '';
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onNext(images);
+  };
+
+  const getImagePreview = (position: keyof InteriorImagesData) => {
+    const file = images[position];
+    if (file) {
+      return URL.createObjectURL(file);
+    }
+    return null;
+  };
+
+  const requiredImages = imagePositions.filter(pos => pos.required).map(pos => pos.key);
+  const hasRequiredImages = true; // Temporarily disabled for testing
+
+  return (
+    <Card className="w-full max-w-6xl mx-auto">
+      <CardHeader>
+        <CardTitle>Interior Photos</CardTitle>
+        <CardDescription>
+          Take photos of your vehicle&apos;s interior. Dashboard, front seats, and odometer are required.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {imagePositions.map(({ key, label, placeholder, required }) => {
+              const position = key as keyof InteriorImagesData;
+              const hasImage = images[position] !== null;
+              const preview = getImagePreview(position);
+
+              return (
+                <div key={key} className="space-y-3">
+                  <Label className="text-sm font-medium">
+                    {label} {required && <span className="text-red-500">*</span>}
+                  </Label>
+                  
+                  <div className="relative aspect-square border-2 border-dashed border-gray-300 rounded-lg overflow-hidden group hover:border-gray-400 transition-colors">
+                    {preview ? (
+                      <div className="relative w-full h-full">
+                        <Image
+                          src={preview}
+                          alt={label}
+                          fill
+                          className="object-cover"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeImage(position)}
+                          className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center h-full p-4 text-center">
+                        <div className="mb-2">
+                          <Image
+                            src={placeholder}
+                            alt={`${label} placeholder`}
+                            width={80}
+                            height={80}
+                            className="opacity-50"
+                          />
+                        </div>
+                        <div className="text-xs text-gray-500 mb-2">
+                          {required ? 'Required' : 'Optional'}
+                        </div>
+                        <input
+                          ref={(el) => fileInputRefs.current[key] = el}
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleFileSelect(position, e)}
+                          className="hidden"
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => fileInputRefs.current[key]?.click()}
+                          className="flex items-center gap-1"
+                        >
+                          <Camera className="w-3 h-3" />
+                          Upload
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+            <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">Interior Photo Tips:</h4>
+            <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+              <li>• Clean the interior before taking photos</li>
+              <li>• Ensure good lighting - use natural light when possible</li>
+              <li>• For the odometer, make sure the reading is clearly visible</li>
+              <li>• Take photos from different angles to show the overall condition</li>
+              <li>• Remove personal items from view for a cleaner look</li>
+            </ul>
+          </div>
+
+          {/* Form Actions */}
+          <div className="flex justify-between pt-6">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onBack}
+              disabled={isLoading}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back
+            </Button>
+            
+            <Button
+              type="submit"
+              disabled={!hasRequiredImages || isLoading}
+              className="flex items-center gap-2"
+            >
+              Next: Engine Video
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
+  );
+}
