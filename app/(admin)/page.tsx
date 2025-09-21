@@ -19,8 +19,23 @@ import {
 import Link from "next/link";
 import { useState, useEffect } from "react";
 
+interface QuoteSubmission {
+  id: number;
+  customerName: string;
+  email: string;
+  phone: string;
+  vehicle: string;
+  vin: string;
+  mileage: string;
+  condition: string;
+  estimatedValue: string;
+  status: string;
+  submittedAt: string;
+  images: number;
+}
+
 export default function AdminDashboard() {
-  const [quoteSubmissions] = useState([]);
+  const [quoteSubmissions, setQuoteSubmissions] = useState<QuoteSubmission[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Mock data - replace with real data later

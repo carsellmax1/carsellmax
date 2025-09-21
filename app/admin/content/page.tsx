@@ -256,7 +256,7 @@ export default function ContentPage() {
                       </TableCell>
                       <TableCell>
                         <div className="text-sm text-muted-foreground max-w-xs truncate">
-                          {block.content_data?.title || block.content_data?.subtitle || 'No preview available'}
+                          {String(block.content_data?.title || block.content_data?.subtitle || 'No preview available')}
                         </div>
                       </TableCell>
                       <TableCell>

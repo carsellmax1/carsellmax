@@ -2,12 +2,22 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Car, User, Camera, Video, FileText, Calendar, DollarSign } from "lucide-react";
+import { ArrowLeft, Car, User, Camera, Video, FileText } from "lucide-react";
 import Image from "next/image";
+
+interface Valuation {
+  id: string;
+  estimated_value: number;
+  market_value: number;
+  condition_adjustment: number;
+  mileage_adjustment: number;
+  created_at: string;
+  updated_at: string;
+}
 
 interface QuoteSubmission {
   id: string;
@@ -42,7 +52,7 @@ interface QuoteSubmission {
     drive_train: string;
     additional_info: string;
   };
-  valuations: any;
+  valuations: Valuation[] | null;
 }
 
 export default function QuoteDetailPage() {
@@ -198,7 +208,7 @@ export default function QuoteDetailPage() {
                       <div>
                         <label className="text-sm font-medium text-muted-foreground">Address</label>
                         <p className="text-sm">
-                          {quote.customers.address?.street}, {quote.customers.address?.city}, {quote.customers.address?.state} {quote.customers.address?.zip}
+                          {String(quote.customers.address?.street || '')}, {String(quote.customers.address?.city || '')}, {String(quote.customers.address?.state || '')} {String(quote.customers.address?.zip || '')}
                         </p>
                       </div>
                     </div>
@@ -410,12 +420,12 @@ export default function QuoteDetailPage() {
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                      {quote.engine_videos.engineVideo && (
+                      {(quote.engine_videos as any)?.engineVideo && (
                         <div>
                           <label className="text-sm font-medium text-muted-foreground">Engine Video</label>
                           <div className="mt-2">
                             <video
-                              src={quote.engine_videos.engineVideo}
+                              src={(quote.engine_videos as any)?.engineVideo}
                               controls
                               className="w-full max-w-md rounded-lg"
                             />
@@ -423,12 +433,12 @@ export default function QuoteDetailPage() {
                         </div>
                       )}
                       
-                      {quote.engine_videos.engineSound && (
+                      {(quote.engine_videos as any)?.engineSound && (
                         <div>
                           <label className="text-sm font-medium text-muted-foreground">Engine Sound</label>
                           <div className="mt-2">
                             <audio
-                              src={quote.engine_videos.engineSound}
+                              src={(quote.engine_videos as any)?.engineSound}
                               controls
                               className="w-full max-w-md"
                             />
@@ -436,11 +446,11 @@ export default function QuoteDetailPage() {
                         </div>
                       )}
 
-                      {quote.engine_videos.additionalVideos && quote.engine_videos.additionalVideos.length > 0 && (
+                      {(quote.engine_videos as any)?.additionalVideos && (quote.engine_videos as any)?.additionalVideos.length > 0 && (
                         <div>
                           <label className="text-sm font-medium text-muted-foreground">Additional Videos</label>
                           <div className="mt-2 space-y-2">
-                            {quote.engine_videos.additionalVideos.map((video: string, index: number) => (
+                            {(quote.engine_videos as any)?.additionalVideos.map((video: string, index: number) => (
                               <video
                                 key={index}
                                 src={video}
@@ -452,10 +462,10 @@ export default function QuoteDetailPage() {
                         </div>
                       )}
 
-                      {quote.engine_videos.notes && (
+                      {(quote.engine_videos as any)?.notes && (
                         <div>
                           <label className="text-sm font-medium text-muted-foreground">Video Notes</label>
-                          <p className="text-sm bg-muted p-3 rounded-md mt-2">{quote.engine_videos.notes}</p>
+                          <p className="text-sm bg-muted p-3 rounded-md mt-2">{(quote.engine_videos as any)?.notes}</p>
                         </div>
                       )}
                     </CardContent>

@@ -19,8 +19,36 @@ import {
 import Link from "next/link";
 import { useState, useEffect } from "react";
 
+interface QuoteSubmission {
+  id: number;
+  customerName: string;
+  email: string;
+  phone: string;
+  vehicle: string;
+  vin: string;
+  mileage: string;
+  condition: string;
+  estimatedValue: string;
+  estimated_value?: number;
+  status: string;
+  submittedAt: string;
+  created_at?: string;
+  images: number;
+  customers?: {
+    name: string;
+    email: string;
+    phone: string;
+  };
+  vehicles?: {
+    year: number;
+    make: string;
+    model: string;
+    mileage: number;
+  };
+}
+
 export default function AdminDashboard() {
-  const [quoteSubmissions, setQuoteSubmissions] = useState<Record<string, unknown>[]>([]);
+  const [quoteSubmissions, setQuoteSubmissions] = useState<QuoteSubmission[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Real data from database
@@ -258,7 +286,7 @@ export default function AdminDashboard() {
                       </TableCell>
                       <TableCell className="font-medium">${submission.estimated_value?.toLocaleString()}</TableCell>
                       <TableCell>{getStatusBadge(submission.status)}</TableCell>
-                      <TableCell>{new Date(submission.created_at).toLocaleDateString()}</TableCell>
+                      <TableCell>{submission.created_at ? new Date(submission.created_at).toLocaleDateString() : 'N/A'}</TableCell>
                       <TableCell>
                         <div className="flex space-x-2">
                           <Link href={`/admin/quotes/${submission.id}`}>

@@ -432,17 +432,20 @@ export default function AnalyticsPage() {
                     <CardContent>
                       <div className="space-y-2">
                         {Object.entries(cohortData.byVehicle.byMake)
-                          .sort(([,a], [,b]) => b.total - a.total)
+                          .sort(([,a], [,b]) => (b as { total: number }).total - (a as { total: number }).total)
                           .slice(0, 5)
-                          .map(([make, data]) => (
-                            <div key={make} className="flex justify-between items-center">
-                              <span>{make}</span>
-                              <div className="flex items-center space-x-2">
-                                <span className="text-sm text-muted-foreground">{data.converted}/{data.total}</span>
-                                <Badge variant="outline">{data.total}</Badge>
+                          .map(([make, data]) => {
+                            const typedData = data as { converted: number; total: number };
+                            return (
+                              <div key={make} className="flex justify-between items-center">
+                                <span>{make}</span>
+                                <div className="flex items-center space-x-2">
+                                  <span className="text-sm text-muted-foreground">{typedData.converted}/{typedData.total}</span>
+                                  <Badge variant="outline">{typedData.total}</Badge>
+                                </div>
                               </div>
-                            </div>
-                          ))}
+                            );
+                          })}
                       </div>
                     </CardContent>
                   </Card>
@@ -454,17 +457,20 @@ export default function AnalyticsPage() {
                     <CardContent>
                       <div className="space-y-2">
                         {Object.entries(cohortData.byVehicle.byModel)
-                          .sort(([,a], [,b]) => b.total - a.total)
+                          .sort(([,a], [,b]) => (b as { total: number }).total - (a as { total: number }).total)
                           .slice(0, 5)
-                          .map(([model, data]) => (
-                            <div key={model} className="flex justify-between items-center">
-                              <span>{model}</span>
-                              <div className="flex items-center space-x-2">
-                                <span className="text-sm text-muted-foreground">{data.converted}/{data.total}</span>
-                                <Badge variant="outline">{data.total}</Badge>
+                          .map(([model, data]) => {
+                            const typedData = data as { converted: number; total: number };
+                            return (
+                              <div key={model} className="flex justify-between items-center">
+                                <span>{model}</span>
+                                <div className="flex items-center space-x-2">
+                                  <span className="text-sm text-muted-foreground">{typedData.converted}/{typedData.total}</span>
+                                  <Badge variant="outline">{typedData.total}</Badge>
+                                </div>
                               </div>
-                            </div>
-                          ))}
+                            );
+                          })}
                       </div>
                     </CardContent>
                   </Card>
